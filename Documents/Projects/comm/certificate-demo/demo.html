@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LOLER Certificate Generator</title>
+  <link rel="stylesheet" href="/css/style.css">
+<style>
+    /* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 11pt;
+  line-height: 1.3;
+  color: #000;
+  background: #fff;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Document Header - Logo and Title Section */
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #000;
+  padding-bottom: 10px;
+}
+
+.logo-section {
+  width: 120px;
+}
+
+.company-logo {
+  max-width: 100px;
+  height: auto;
+}
+
+.title-section {
+  text-align: center;
+  flex: 1;
+}
+
+.title-section h1 {
+  font-size: 14pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  font-size: 9pt;
+  font-style: italic;
+}
+
+.header-spacer {
+  width: 120px;
+}
+
+/* Form Container */
+#certForm {
+  width: 100%;
+}
+
+/* Fieldset Base Styles */
+fieldset {
+  border: 1px solid #000;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+legend {
+  font-weight: bold;
+  font-size: 10pt;
+  padding: 0 5px;
+}
+
+/* Header Fields Row */
+.header-fields {
+  border: 1px solid #000;
+  padding: 5px;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.header-row label {
+  font-size: 9pt;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.header-row input[type="text"],
+.header-row input[type="date"] {
+  border: none;
+  border-bottom: 1px solid #000;
+  font-size: 9pt;
+  padding: 2px 5px;
+  min-width: 120px;
+}
+
+/* Dual Column Layout for Employer & Premises */
+.dual-column {
+  display: flex;
+  gap: 0;
+  padding: 0;
+  border: 1px solid #000;
+}
+
+.employer-box,
+.premises-box {
+  flex: 1;
+  padding: 8px;
+  border-right: 1px solid #000;
+}
+
+.premises-box {
+  border-right: none;
+}
+
+.field-label {
+  display: block;
+  font-size: 9pt;
+  font-weight: normal;
+  margin-bottom: 5px;
+  font-style: normal;
+}
+
+.employer-box textarea,
+.premises-box textarea {
+  width: 100%;
+  border: none;
+  font-size: 9pt;
+  resize: none;
+  font-family: inherit;
+  min-height: 50px;
+}
+
+/* Status Legend */
+.status-legend {
+  border: 1px solid #000;
+  padding: 5px 10px;
+}
+
+.status-legend legend {
+  font-size: 9pt;
+  font-weight: bold;
+}
+
+.status-codes {
+  display: flex;
+  gap: 20px;
+  font-size: 9pt;
+  flex-wrap: wrap;
+}
+
+/* Equipment Table */
+#equipmentTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8pt;
+  margin-top: 5px;
+}
+
+#equipmentTable th,
+#equipmentTable td {
+  border: 1px solid #000;
+  padding: 4px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#equipmentTable th {
+  background: #f0f0f0;
+  font-weight: bold;
+  font-size: 8pt;
+  line-height: 1.2;
+}
+
+#equipmentTable td {
+  padding: 2px;
+}
+
+#equipmentTable input,
+#equipmentTable textarea,
+#equipmentTable select {
+  width: 100%;
+  border: none;
+  font-size: 8pt;
+  font-family: inherit;
+  padding: 2px;
+  text-align: center;
+}
+
+#equipmentTable textarea {
+  resize: none;
+  min-height: 30px;
+  text-align: left;
+}
+
+#equipmentTable input[size="2"] {
+  width: 30px;
+}
+
+#equipmentTable input[size="4"] {
+  width: 50px;
+}
+
+#equipmentTable input[size="6"] {
+  width: 60px;
+}
+
+.remove-row {
+  background: #ff4444;
+  color: #fff;
+  border: none;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  line-height: 1;
+}
+
+#addRow {
+  margin-top: 10px;
+  padding: 5px 15px;
+  background: #4CAF50;
+  color: white;
+  border: 1px solid #000;
+  cursor: pointer;
+  font-size: 9pt;
+}
+
+/* Reason for Examination Section */
+.reason-section {
+  border: 1px solid #000;
+  padding: 5px 10px;
+}
+
+.reason-section legend {
+  font-size: 9pt;
+  font-weight: bold;
+}
+
+.reason-options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9pt;
+  flex-wrap: wrap;
+}
+
+.reason-label {
+  font-weight: normal;
+  margin-right: 2px;
+}
+
+.checkbox-label {
+  margin-right: 15px;
+  font-weight: bold;
+}
+
+.reason-options input[type="checkbox"] {
+  margin: 0;
+}
+
+/* Additional Info Section */
+.additional-info {
+  display: flex;
+  border: 1px solid #000;
+  padding: 0;
+}
+
+.defect-section,
+.standard-section {
+  flex: 1;
+  padding: 8px;
+  border-right: 1px solid #000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.standard-section {
+  border-right: none;
+}
+
+.radio-group {
+  display: flex;
+  gap: 15px;
+}
+
+.radio-group label {
+  font-size: 9pt;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.standard-section input {
+  border: none;
+  border-bottom: 1px solid #000;
+  font-size: 9pt;
+  flex: 1;
+}
+
+/* Signatures Section */
+.signatures-section {
+  display: flex;
+  border: 1px solid #000;
+  padding: 0;
+}
+
+.inspector-box,
+.checked-by-box {
+  flex: 1;
+  padding: 10px;
+  border-right: 1px solid #000;
+}
+
+.checked-by-box {
+  border-right: none;
+}
+
+.inspector-box input[type="text"],
+.checked-by-box input[type="text"] {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #000;
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.signature-area,
+.seal-area {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.signature-area label,
+.seal-area label {
+  display: block;
+  font-size: 9pt;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+canvas {
+  border: 1px solid #000;
+  background: #fff;
+  cursor: crosshair;
+  display: block;
+  margin: 0 auto;
+}
+
+.seal-placeholder {
+  position: relative;
+  display: inline-block;
+}
+
+#clearInspector,
+#clearChecked {
+  margin-top: 5px;
+  padding: 2px 10px;
+  font-size: 8pt;
+  cursor: pointer;
+  border: 1px solid #000;
+  background: #f0f0f0;
+}
+
+.inspector-box textarea,
+.checked-by-box textarea {
+  width: 100%;
+  border: none;
+  border-top: 1px solid #000;
+  font-size: 8pt;
+  text-align: center;
+  margin-top: 10px;
+  padding: 5px;
+  resize: none;
+  font-family: inherit;
+}
+
+/* Certification Logos Footer */
+.certification-logos {
+  border: none;
+  margin-top: 15px;
+  padding: 10px 0;
+}
+
+.logos-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.logos-row img {
+  max-height: 50px;
+  max-width: 100px;
+  object-fit: contain;
+}
+
+/* Generate Button */
+.generate-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 30px;
+  background: #0066cc;
+  color: white;
+  border: 1px solid #000;
+  font-size: 11pt;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.generate-btn:hover {
+  background: #0052a3;
+}
+
+/* Result Section */
+#result {
+  border: 1px solid #000;
+  padding: 20px;
+  text-align: center;
+  background: #f9f9f9;
+}
+
+#result h3 {
+  margin-bottom: 15px;
+  font-size: 12pt;
+}
+
+#qrImage {
+  margin: 10px 0;
+  max-width: 150px;
+}
+
+#result a {
+  display: inline-block;
+  margin: 5px 10px;
+  color: #0066cc;
+  text-decoration: underline;
+  font-size: 10pt;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    padding: 0;
+    font-size: 10pt;
+  }
+  
+  .generate-btn,
+  #addRow,
+  .remove-row,
+  button[type="button"] {
+    display: none !important;
+  }
+  
+  fieldset {
+    page-break-inside: avoid;
+  }
+  
+  canvas {
+    border: 1px solid #000 !important;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dual-column,
+  .additional-info,
+  .signatures-section {
+    flex-direction: column;
+  }
+  
+  .employer-box,
+  .premises-box,
+  .defect-section,
+  .standard-section,
+  .inspector-box,
+  .checked-by-box {
+    border-right: none;
+    border-bottom: 1px solid #000;
+  }
+  
+  .header-row {
+    flex-direction: column;
+  }
+  
+  .reason-options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .logos-row {
+    justify-content: center;
+  }
+}
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+</head>
+<body>
+  <!-- Document Header matching the image -->
+  <div class="doc-header">
+    <div class="logo-section">
+      <img src="/images/elspeth-logo.png" alt="Elspeth Integrated Services" class="company-logo">
+    </div>
+    <div class="title-section">
+      <h1>Report Of Thorough Examination</h1>
+      <p class="subtitle">This report meets the requirements of schedule 1 of regulation 10 of LOLER 1998</p>
+    </div>
+    <div class="header-spacer"></div>
+  </div>
+
+  <form id="certForm">
+    <!-- Top header fields - arranged horizontally as in original -->
+    <fieldset class="header-fields">
+      <legend style="display:none;">Certificate Header</legend>
+      <div class="header-row">
+        <label>Certificate No: <input type="text" name="certificateNo" required></label>
+        <label>Date of this Thorough Examination: <input type="date" name="dateOfExamination" required></label>
+        <label>Date of Report: <input type="date" name="dateOfReport" required></label>
+        <label>Colour code (if required): <input type="text" name="colourCode"></label>
+      </div>
+    </fieldset>
+
+    <!-- Employer and Premises - side by side as in original -->
+    <fieldset class="dual-column">
+      <legend style="display:none;">Employer & Premises</legend>
+      <div class="employer-box">
+        <label class="field-label">Name & Address of the employer for whom the examination was made:</label>
+        <textarea name="employerNameAddress" rows="3" required></textarea>
+      </div>
+      <div class="premises-box">
+        <label class="field-label">Address of the premises at which the examination was made:</label>
+        <textarea name="premisesAddress" rows="3" required></textarea>
+      </div>
+    </fieldset>
+
+    <!-- Status Codes Legend -->
+    <fieldset class="status-legend">
+      <legend>Status</legend>
+      <div class="status-codes">
+        <span>ND – No Defect</span>
+        <span>SDR – See Defect Report</span>
+        <span>NF – Not Found</span>
+        <span>OBS – Observation (see Defect Report)</span>
+      </div>
+    </fieldset>
+
+    <!-- Equipment table - matching original column structure exactly -->
+    <fieldset>
+      <legend>Equipment Details</legend>
+      <table id="equipmentTable">
+        <thead>
+          <tr>
+            <th>S/N</th>
+            <th>Identification<br>Number</th>
+            <th>Description</th>
+            <th>WLL<br>or<br>SWL</th>
+            <th>Date of Last<br>Thorough<br>Examination</th>
+            <th>Date of<br>Manufacture<br>(if known)</th>
+            <th>Latest date of<br>next thorough<br>examination</th>
+            <th>Reason for<br>Examination<br>(See Below)</th>
+            <th>Details<br>of any<br>test</th>
+            <th>Status<br>(See<br>above)</th>
+            <th>Safe to<br>Use<br>Yes / No</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="equipmentRows">
+          <!-- Initial row template -->
+          <tr class="equipment-row">
+            <td><input type="text" name="sn[]" size="2" required></td>
+            <td><input type="text" name="identNo[]" required></td>
+            <td><textarea name="description[]" rows="2" required></textarea></td>
+            <td><input type="text" name="wll[]" size="4" required></td>
+            <td><input type="date" name="lastExamDate[]" required></td>
+            <td><input type="date" name="manufactureDate[]"></td>
+            <td><input type="date" name="nextExamDate[]" required></td>
+            <td>
+              <select name="reason[]" required>
+                <option value="A">A</option>
+                <option value="B" selected>B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+              </select>
+            </td>
+            <td><input type="text" name="testDetails[]" value="Nil" size="6"></td>
+            <td>
+              <select name="status[]" required>
+                <option value="ND" selected>ND</option>
+                <option value="SDR">SDR</option>
+                <option value="NF">NF</option>
+                <option value="OBS">OBS</option>
+              </select>
+            </td>
+            <td>
+              <select name="safeToUse[]" required>
+                <option value="YES" selected>YES</option>
+                <option value="NO">NO</option>
+              </select>
+            </td>
+            <td><button type="button" class="remove-row">×</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" id="addRow">Add Equipment</button>
+    </fieldset>
+
+    <!-- Reason for Examination - horizontal layout with checkboxes -->
+    <fieldset class="reason-section">
+      <legend>Reason for Examination</legend>
+      <div class="reason-options">
+        <label class="reason-label">Installation:</label>
+        <input type="checkbox" name="reasonExam" value="A" id="reasonA">
+        <label for="reasonA" class="checkbox-label">A</label>
+        
+        <label class="reason-label">6 Monthly:</label>
+        <input type="checkbox" name="reasonExam" value="B" id="reasonB" checked>
+        <label for="reasonB" class="checkbox-label">B</label>
+        
+        <label class="reason-label">12 Monthly:</label>
+        <input type="checkbox" name="reasonExam" value="C" id="reasonC">
+        <label for="reasonC" class="checkbox-label">C</label>
+        
+        <label class="reason-label">Written Scheme:</label>
+        <input type="checkbox" name="reasonExam" value="D" id="reasonD">
+        <label for="reasonD" class="checkbox-label">D</label>
+        
+        <label class="reason-label">Exceptional Circumstance:</label>
+        <input type="checkbox" name="reasonExam" value="E" id="reasonE">
+        <label for="reasonE" class="checkbox-label">E</label>
+      </div>
+    </fieldset>
+
+    <!-- Additional Info - side by side layout -->
+    <fieldset class="additional-info">
+      <legend style="display:none;">Additional Information</legend>
+      <div class="defect-section">
+        <label class="field-label">Defect / Observation sheet attached?</label>
+        <div class="radio-group">
+          <label><input type="radio" name="defectSheetAttached" value="true"> Yes</label>
+          <label><input type="radio" name="defectSheetAttached" value="false" checked> No</label>
+        </div>
+      </div>
+      <div class="standard-section">
+        <label class="field-label">Relevant standard</label>
+        <input type="text" name="relevantStandard" value="BS EN 13414-2">
+      </div>
+    </fieldset>
+
+    <!-- Inspector and Checked By - side by side boxes -->
+    <fieldset class="signatures-section">
+      <legend style="display:none;">Signatures</legend>
+      
+      <div class="inspector-box">
+        <label class="field-label">Inspector's Name/Qualification</label>
+        <input type="text" name="inspectorName" placeholder="Name" required>
+        <div class="signature-area">
+          <label>Signature:</label>
+          <canvas id="inspectorCanvas" width="300" height="100"></canvas>
+          <button type="button" id="clearInspector">Clear</button>
+        </div>
+        <textarea name="inspectorQual" placeholder="Qualifications (e.g., FID Factory Act, ASNT LEVEL II, IADC Lifting Inspector, LEEA DIPLOMA)" rows="2" required></textarea>
+      </div>
+
+      <div class="checked-by-box">
+        <label class="field-label">Checked by Name/Qualification</label>
+        <input type="text" name="checkedByName" placeholder="Name" required>
+        <div class="seal-area">
+          <label>Seal/Signature:</label>
+          <div class="seal-placeholder">
+            <canvas id="checkedCanvas" width="300" height="100"></canvas>
+            <button type="button" id="clearChecked">Clear</button>
+          </div>
+        </div>
+        <textarea name="checkedByQual" placeholder="Qualifications" rows="2" required></textarea>
+      </div>
+    </fieldset>
+
+    <!-- Certification Logos Footer -->
+    <fieldset class="certification-logos">
+      <legend style="display:none;">Certifications</legend>
+      <div class="logos-row">
+        <img src="/images/iso-9001.png" alt="ISO 9001:2015">
+        <img src="/images/iadc-dit.png" alt="IADC DIT">
+        <img src="/images/leea.png" alt="LEEA">
+        <img src="/images/nigerian-gov.png" alt="Nigerian Government Seal">
+        <img src="/images/labour-employment.png" alt="Federal Ministry of Labour & Employment">
+      </div>
+    </fieldset>
+
+    <button type="submit" class="generate-btn">Generate Certificate</button>
+  </form>
+
+  <!-- Result area -->
+  <div id="result" style="display:none; margin-top:20px">
+    <h3>Certificate Generated</h3>
+    <img id="qrImage" /><br>
+    <a id="pdfLink" target="_blank">Download PDF</a><br>
+    <a id="verifyLink" target="_blank">Verification Page</a>
+  </div>
+
+  <script src="/js/form.js"></script>
+</body>
+</html>
