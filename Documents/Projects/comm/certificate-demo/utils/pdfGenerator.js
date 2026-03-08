@@ -63,25 +63,69 @@ async function generatePDF(certData, qrDataUrl, returnBuffer = false) {
 }
 
 function buildHTML(certData, qrDataUrl, logoBase64, isoBase64, iadcBase64, leeaBase64, nigeriaBase64, labourBase64) {
-  const formatDate = (date) => date ? new Date(date).toLocaleDateString('en-GB') : '';
+  const formatDate = (date) => {
+    if (!date) return '';
+    try {
+      return new Date(date).toLocaleDateString('en-GB');
+    } catch {
+      return '';
+    }
+  };
 
-  const checkedReason = certData.overallReasons && certData.overallReasons.length > 0 ? certData.overallReasons[0] : 'B';
+  // Safely get overallReasons array
+  const overallReasons = Array.isArray(certData.overallReasons) ? certData.overallReasons : [];
+  const checkedReason = overallReasons.length > 0 ? overallReasons[0] : 'B';
 
-  const equipmentRows = certData.equipment.map(eq => `
+  // Safe string with replace
+  const safeString = (str) => str || '';
+
+  const equipmentRows = (certData.equipment || []).map(eq => {
+    // Provide defaults for each equipment field
+    const sn = safeString(eq.sn);
+    const identificationNumber = safeString(eq.identificationNumber);
+    const description = safeString(eq.description);
+    const wllSwl = safeString(eq.wllSwl);
+    const lastExamDate = formatDate(eq.lastExamDate);
+    const manufactureDate = eq.manufactureDate ? formatDate(eq.manufactureDate) : '-';
+    const nextExamDate = formatDate(eq.nextExamDate);
+    const reason = safeString(eq.reason);
+    const testDetails = safeString(eq.testDetails);
+    const statusCode = safeString(eq.statusCode);
+    const safeToUse = safeString(eq.safeToUse);
+
+    return `
     <tr>
-      <td>${eq.sn}</td>
-      <td>${eq.identificationNumber}</td>
-      <td>${eq.description}</td>
-      <td>${eq.wllSwl}</td>
-      <td>${formatDate(eq.lastExamDate)}</td>
-      <td>${eq.manufactureDate ? formatDate(eq.manufactureDate) : '-'}</td>
-      <td>${formatDate(eq.nextExamDate)}</td>
-      <td>${eq.reason}</td>
-      <td>${eq.testDetails || ''}</td>
-      <td>${eq.statusCode}</td>
-      <td>${eq.safeToUse}</td>
+      <td>${sn}</td>
+      <td>${identificationNumber}</td>
+      <td>${description}</td>
+      <td>${wllSwl}</td>
+      <td>${lastExamDate}</td>
+      <td>${manufactureDate}</td>
+      <td>${nextExamDate}</td>
+      <td>${reason}</td>
+      <td>${testDetails}</td>
+      <td>${statusCode}</td>
+      <td>${safeToUse}</td>
     </tr>
-  `).join('');
+  `}).join('');
+
+  // Employer and premises (with replace)
+  const employerNameAddress = safeString(certData.employerNameAddress).replace(/\n/g, '<br>');
+  const premisesAddress = safeString(certData.premisesAddress).replace(/\n/g, '<br>');
+  const inspectorQual = safeString(certData.inspectorQual).replace(/\n/g, '<br>');
+  const checkedByQual = safeString(certData.checkedByQual).replace(/\n/g, '<br>');
+
+  // Other fields with defaults
+  const certificateNo = safeString(certData.certificateNo);
+  const dateOfExamination = formatDate(certData.dateOfExamination);
+  const dateOfReport = formatDate(certData.dateOfReport);
+  const colourCode = safeString(certData.colourCode);
+  const defectSheetAttached = certData.defectSheetAttached ? 'Yes' : 'No';
+  const relevantStandard = safeString(certData.relevantStandard);
+  const inspectorName = safeString(certData.inspectorName);
+  const checkedByName = safeString(certData.checkedByName);
+  const inspectorSignature = safeString(certData.inspectorSignature);
+  const checkedBySignature = safeString(certData.checkedBySignature);
 
   return `
 <!DOCTYPE html>
@@ -196,21 +240,21 @@ function buildHTML(certData, qrDataUrl, logoBase64, isoBase64, iadcBase64, leeaB
 
   <div class="header-fields">
     <div class="header-row">
-      <div><strong>Certificate No:</strong> ${certData.certificateNo}</div>
-      <div><strong>Date of Examination:</strong> ${formatDate(certData.dateOfExamination)}</div>
-      <div><strong>Date of Report:</strong> ${formatDate(certData.dateOfReport)}</div>
-      <div><strong>Colour code:</strong> ${certData.colourCode || ''}</div>
+      <div><strong>Certificate No:</strong> ${certificateNo}</div>
+      <div><strong>Date of Examination:</strong> ${dateOfExamination}</div>
+      <div><strong>Date of Report:</strong> ${dateOfReport}</div>
+      <div><strong>Colour code:</strong> ${colourCode}</div>
     </div>
   </div>
 
   <div class="dual-column">
     <div class="employer-box">
       <div class="field-label">Name & Address of the employer:</div>
-      <div>${certData.employerNameAddress.replace(/\n/g, '<br>')}</div>
+      <div>${employerNameAddress}</div>
     </div>
     <div class="premises-box">
       <div class="field-label">Address of the premises:</div>
-      <div>${certData.premisesAddress.replace(/\n/g, '<br>')}</div>
+      <div>${premisesAddress}</div>
     </div>
   </div>
 
@@ -251,26 +295,26 @@ function buildHTML(certData, qrDataUrl, logoBase64, isoBase64, iadcBase64, leeaB
   <div class="additional-info">
     <div class="defect-section">
       <span class="field-label">Defect sheet attached?</span>
-      <span>${certData.defectSheetAttached ? 'Yes' : 'No'}</span>
+      <span>${defectSheetAttached}</span>
     </div>
     <div class="standard-section">
       <span class="field-label">Relevant standard</span>
-      <span>${certData.relevantStandard}</span>
+      <span>${relevantStandard}</span>
     </div>
   </div>
 
   <div class="signatures-section">
     <div class="inspector-box">
       <div class="field-label">Inspector's Name/Qualification</div>
-      <div><strong>${certData.inspectorName}</strong></div>
-      <div><img class="signature-img" src="${certData.inspectorSignature}" alt="Inspector Signature" onerror="this.style.display='none'; this.parentNode.innerHTML += '<span class=\\'missing-image\\'>[Signature missing]</span>';"></div>
-      <div>${certData.inspectorQual.replace(/\n/g, '<br>')}</div>
+      <div><strong>${inspectorName}</strong></div>
+      <div><img class="signature-img" src="${inspectorSignature}" alt="Inspector Signature" onerror="this.style.display='none'; this.parentNode.innerHTML += '<span class=\\'missing-image\\'>[Signature missing]</span>';"></div>
+      <div>${inspectorQual}</div>
     </div>
     <div class="checked-by-box">
       <div class="field-label">Checked by Name/Qualification</div>
-      <div><strong>${certData.checkedByName}</strong></div>
-      <div><img class="signature-img" src="${certData.checkedBySignature}" alt="Checked Signature" onerror="this.style.display='none'; this.parentNode.innerHTML += '<span class=\\'missing-image\\'>[Signature missing]</span>';"></div>
-      <div>${certData.checkedByQual.replace(/\n/g, '<br>')}</div>
+      <div><strong>${checkedByName}</strong></div>
+      <div><img class="signature-img" src="${checkedBySignature}" alt="Checked Signature" onerror="this.style.display='none'; this.parentNode.innerHTML += '<span class=\\'missing-image\\'>[Signature missing]</span>';"></div>
+      <div>${checkedByQual}</div>
     </div>
   </div>
 
