@@ -7,16 +7,15 @@ const apiRoutes = require('./routes/api');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// MongoDB connection using environment variable
+// MongoDB connection using environment variable (options removed for Mongoose 6+)
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/loler_certs';
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log('MongoDB connected');
-}).catch(err => {
-  console.error('MongoDB connection error:', err);
-});
+mongoose.connect(mongoURI)
+  .then(() => {
+    console.log('MongoDB connected');
+  })
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+  });
 
 // Middleware
 app.use(bodyParser.json({ limit: '10mb' }));
